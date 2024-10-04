@@ -14,11 +14,11 @@ driver.get("http://uitestingplayground.com/classattr")
 # Запустите скрипт три раза подряд. Убедитесь, что он отработает одинаково.
 # (Решила так попробовать сделать)
 for i in range(3):
-    blue_button = (driver.find_element(
+    driver.find_element(
         By.XPATH,
         "//button[contains(concat(' ', normalize-space(@class),' '), "
-        "' btn-primary ')]").click())
-    sleep(5)
+        "' btn-primary ')]").click()
+    sleep(2)
     driver.refresh()
 
 driver.quit()

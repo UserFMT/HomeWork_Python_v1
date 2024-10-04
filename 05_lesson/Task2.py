@@ -23,8 +23,9 @@ for i in range(3):
                                     "button.btn.btn-primary")))
 
     # Кликните на синюю кнопку.
-    blue_button = driver.find_element(By.CSS_SELECTOR,
-                                      "button.btn.btn-primary").click()
+    driver.find_element(
+        By.CSS_SELECTOR,
+        "button.btn.btn-primary").click()
 
 sleep(2)
 

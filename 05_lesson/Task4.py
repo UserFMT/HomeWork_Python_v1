@@ -18,7 +18,7 @@ button_close = WebDriverWait(driver, 10).until(
     EC.element_to_be_clickable((By.CSS_SELECTOR, "div.modal")))
 
 # Нажимаем кнопку
-button_close = driver.find_element(By.CSS_SELECTOR, "div.modal-footer").click()
+driver.find_element(By.CSS_SELECTOR, "div.modal-footer").click()
 
 print("Кнопка нажата! Окно драйвера закрыто.")
 

@@ -18,7 +18,7 @@ input_password = (driver.find_element(By.ID, "password").
 sleep(2)
 
 # Нажмите кнопку Login
-button_login = driver.find_element(By.CLASS_NAME, "radius").click()
+driver.find_element(By.CLASS_NAME, "radius").click()
 
 sleep(1)
 
