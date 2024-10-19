@@ -1,26 +1,6 @@
-# Откройте сайт магазина: https://www.saucedemo.com/.
-# Авторизуйтесь как пользователь standard_user.
-# Добавьте в корзину товары:
-#  Sauce Labs Backpack.
-#  Sauce Labs Bolt T-Shirt.
-#  Sauce Labs Onesie.
-# Перейдите в корзину.
-# Нажмите Checkout.
-# Заполните форму своими данными:
-#  имя,
-#  фамилия,
-#  почтовый индекс.
-# Нажмите кнопку Continue.
-# Прочитайте со страницы итоговую стоимость ( Total ).
-# Закройте браузер.
-# Проверьте, что итоговая сумма равна $58.29.
-
 import pytest
 
 from selenium import webdriver
-
-# from selenium.webdriver.chrome.service import Service as ChromeService
-# from webdriver_manager.chrome import ChromeDriverManager
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC

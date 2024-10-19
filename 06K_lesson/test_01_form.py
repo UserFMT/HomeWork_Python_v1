@@ -1,22 +1,16 @@
-# Откройте страницу:
-# https://bonigarcia.dev/selenium-webdriver-java/data-types.html.
-# Заполните форму значениями:
-# Нажмите кнопку Submit.
-# Проверьте (assert), что поле Zip code подсвечено красным.
-# Проверьте (assert), что остальные поля подсвечены зеленым.
 import pytest
 
 from selenium import webdriver
-
-# from selenium.webdriver.chrome.service import Service as ChromeService
-# from webdriver_manager.chrome import ChromeDriverManager
 from selenium.webdriver.common.by import By
-# from selenium.webdriver.support.ui import WebDriverWait
-# from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
 
 driver = webdriver.Chrome()
 driver.get(" https://bonigarcia.dev/selenium-webdriver-java/data-types.html")
 
+
+waiter =(WebDriverWait(driver).
+         until(EC.visibility_of_element_located((By.NAME, "first-name"))))
 (driver.find_element(
     By.CSS_SELECTOR, "input.form-control[name='first-name']").
     send_keys("Иван"))

@@ -1,13 +1,3 @@
-# Откройте страницу: https://bonigarcia.dev/selenium-webdriver-java/
-# slow-calculator.html.
-# В поле ввода по локатору #delay  введите значение 45.
-# Нажмите на кнопки:
-# 7
-# +
-# 8
-# =
-# Проверьте (assert), что в окне отобразится результат 15  через 45 секунд.
-
 import pytest
 
 from selenium import webdriver
@@ -22,7 +12,7 @@ driver.get("https://bonigarcia.dev/selenium-webdriver-java/"
            "slow-calculator.html")
 
 driver.find_element(By.CSS_SELECTOR, "#delay").clear()
-driver.find_element(By.CSS_SELECTOR, "#delay").send_keys(time_delay)
+driver.find_element(By.CSS_SELECTOR, "#delay").send_keys(f'{time_delay}')
 driver.find_element(By.XPATH, "//span[text()='7']").click()
 driver.find_element(By.XPATH, "//span[text()='+']").click()
 driver.find_element(By.XPATH, "//span[text()='8']").click()
@@ -34,6 +24,7 @@ waiter = WebDriverWait(driver, time_delay+1).until(
 text = driver.find_element(By.CSS_SELECTOR, 'div.screen').text
 
 driver.quit()
+
 
 @pytest.mark.parametrize('text, result', [(text, "15")])
 def test_result_waiter(text, result):
