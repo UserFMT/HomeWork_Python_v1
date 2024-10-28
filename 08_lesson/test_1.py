@@ -5,6 +5,8 @@ import Parametrs
 
 from Project import Project
 
+project_api = Project(Parametrs.URL)
+
 
 def generate_string(length):
     all_symbols = string.ascii_uppercase + string.ascii_lowercase
@@ -12,24 +14,26 @@ def generate_string(length):
     return result
 
 
-project_api = Project(Parametrs.URL)
-
 headers = {
-    "Authorization": f"Bearer {Parametrs.Token}",
-    "Content-Type": "application/json"
-}
-
+        "Authorization": f"Bearer {Parametrs.Token}",
+        "Content-Type": "application/json"
+    }
 project = {
         "title": f"{generate_string(10)}",
         "users": {f"{Parametrs.users}": "admin"}
-}
+    }
+
+
+@pytest.fixture(scope = "session", autouse = True)
+def project_new():
+    project_new = project_api.create_project(project, headers)
+    return project_new["id"]
 
 
 @pytest.mark.parametrize('project, headers',
                          [(project, headers)])
 def test_create_project(project, headers):
     project_new = project_api.create_project(project, headers)
-    Parametrs.id_project_new = project_new["id"]
     assert project_new["id"] is not None
 
 
@@ -39,7 +43,7 @@ def test_get_list_project(headers):
     assert len(list_projects) > 0, "У данной компании отсутствуют проекты."
 
 
-@pytest.mark.parametrize('headers, id ', [(headers, Parametrs.id_project_new)])
+@pytest.mark.parametrize('headers, id ', [(headers, project_new)])
 def test_get_id_project(headers, id):
     get_project = project_api.get_id_project(headers, id)
     assert get_project["id"] == id
@@ -91,7 +95,7 @@ def test_get_list_project_negarive(headers):
             "У данной компании отсутствуют проекты."
 
 
-@pytest.mark.parametrize('headers, id', [(headers, Parametrs.id_project_new)])
+@pytest.mark.parametrize('headers, id', [(headers, project_new)])
 def test_get_id_project_negative(headers, id):
     if (headers is None) or (headers == ''):
         print("В запросе получения списка проектов отсутствует информация"
