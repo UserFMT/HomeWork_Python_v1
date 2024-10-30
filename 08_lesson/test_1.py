@@ -24,6 +24,7 @@ project = {
     }
 
 
+
 @pytest.fixture(scope = "session", autouse = True)
 def project_new():
     project_n= {
@@ -31,25 +32,55 @@ def project_new():
         "users": {f"{Parametrs.users}": "admin"}
     }
     project_new = project_api.create_project(project_n, headers)
-    return project_new["id"]
+    return project_new.json()["id"]
+
 
 
 @pytest.mark.parametrize('project, headers',
                          [(project, headers)])
 def test_create_project(project, headers):
     project_new = project_api.create_project(project, headers)
-    assert project_new["id"] is not None
+    assert project_new.status_code == 201
+    assert project_new.json()["id"] is not None
+    project = {
+        "deleted": True
+    }
+    del_project = project_api.edit_id_project(headers, project_new.json()["id"], project)
+    assert del_project["id"] is not None
 
 
 @pytest.mark.parametrize('headers', [headers])
 def test_get_list_project(headers):
     list_projects = project_api.get_list_projects(headers)
-    assert len(list_projects) > 0, "У данной компании отсутствуют проекты."
+    assert list_projects.status_code == 200
+    count_after = list_projects.json()["paging"]["count"]
+    project_add = {
+        "title": "Autotest_add_list",
+        "users": {f"{Parametrs.users}": "admin"}
+    }
+    add_project = project_api.create_project(project_add,headers)
+    assert  add_project.json()["id"] is not None
+
+    list_projects = project_api.get_list_projects(headers)
+    count_before = list_projects.json()["paging"]["count"]
+    assert count_after < count_before , "Кол-во проектов не изменилось после добавления."
+    project_add = {
+        "deleted": True
+    }
+    del_project = project_api.edit_id_project(headers, add_project.json()["id"], project_add)
+    assert del_project["id"] is not None
 
 
 def test_get_id_project(project_new):
     get_project = project_api.get_id_project(headers, project_new)
-    assert get_project["id"]  is not None
+    assert get_project.status_code == 200
+    assert get_project.json()["id"]  is not None
+    project_del = {
+        "deleted": True
+        }
+    del_project = project_api.edit_id_project(headers, get_project.json()["id"], project_del)
+    assert del_project["id"]  is not None
+
 
 def test_edit_id_project():
     project = {
@@ -57,16 +88,27 @@ def test_edit_id_project():
         "users": {f"{Parametrs.users}": "admin"}
     }
     get_project = project_api.create_project(project, headers)
-    id_project = get_project["id"]
+    assert get_project.status_code == 201
+    assert get_project.json()["id"] is not None
 
-    get_project = project_api.get_id_project(headers, id_project)
+    get_project = project_api.get_id_project(headers, get_project.json()["id"])
+    assert get_project.status_code == 200
+    assert get_project.json()["id"] is not None
+
     project = {
-        "title": f"{get_project['title']}+_New",
-        "users": {f"{Parametrs.users}": "admin"}
+        "title": f"{get_project.json()['title']}+_New"
     }
-    project_api.edit_id_project(headers, id_project, project)
-    get_project = project_api.get_id_project(headers, id_project)
-    assert get_project["title"] == project["title"]
+    project_n = project_api.edit_id_project(headers, get_project.json()["id"], project)
+    assert project_n["id"] is not None
+
+    project_n = project_api.get_id_project(headers, project_n["id"])
+    assert get_project.json()["title"] != project_n.json()["title"], \
+        "Название проекта не изменилось"
+    project = {
+        "deleted": True
+        }
+    del_project = project_api.edit_id_project(headers, project_n.json()["id"], project)
+    assert del_project["id"] is not None
 
 
 @pytest.mark.parametrize('project, headers', [(None, headers),
@@ -74,15 +116,15 @@ def test_edit_id_project():
                                               (project, "")])
 def test_create_project_negative(project, headers):
     if (project is None) or (project == ""):
-        print("В запросе создания проекта отсутствует обязательный атрибут, "
+        print("В запросе создания проекта отсутствует обязательный атрибут,"
               " определяющий параметры проекта(Json)")
     elif ((headers is None) or (headers == "")):
-        print("В запросе создания проекта отсутствует информация "
+        print("В запросе создания проекта отсутствует информация"
               " об авторизации клиента(headers)")
     else:
         project_new = project_api.create_project(project, headers)
-        Parametrs.id_project_new = project_new["id"]
-        assert project_new["id"] is not None
+        assert project_new.status_code == 201
+        assert project_new.json()["id"] is not None
 
 
 @pytest.mark.parametrize('headers',
@@ -90,10 +132,11 @@ def test_create_project_negative(project, headers):
 def test_get_list_project_negarive(headers):
     if (headers is None) or (headers == ''):
         print("В запросе получения списка проектов отсутствует информация"
-              "об авторизации клиента(headers)")
+              " об авторизации клиента(headers)")
     else:
         list_projects = project_api.get_list_projects(headers)
-        assert len(list_projects) > 0, \
+        assert  list_projects.status_code == 200
+        assert  list_projects.json()["paging"]["count"] != 0,\
             "У данной компании отсутствуют проекты."
 
 
@@ -104,11 +147,11 @@ def test_get_list_project_negarive(headers):
 def test_get_id_project_negative(headers, project):
     if (headers is None) or (headers == ''):
         print("В запросе получения списка проектов отсутствует информация"
-              "об авторизации клиента(headers)")
+              " об авторизации клиента(headers)")
     elif (project is None) or (project == ''):
         print("В запросе получения списка проектов отсутствует информация"
-              "об  идентификаторе проекта(id)")
+              " об  идентификаторе проекта(id)")
     else:
         create_project =  project_api.create_project(project, headers)
-        get_project = project_api.get_id_project(headers, create_project["id"])
-        assert get_project["id"] is not None
+        get_project = project_api.get_id_project(headers, create_project.json()["id"])
+        assert get_project.json()["id"] is not None
