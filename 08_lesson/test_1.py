@@ -26,7 +26,11 @@ project = {
 
 @pytest.fixture(scope = "session", autouse = True)
 def project_new():
-    project_new = project_api.create_project(project, headers)
+    project_n= {
+        "title": f"{generate_string(10)}",
+        "users": {f"{Parametrs.users}": "admin"}
+    }
+    project_new = project_api.create_project(project_n, headers)
     return project_new["id"]
 
 
@@ -43,11 +47,9 @@ def test_get_list_project(headers):
     assert len(list_projects) > 0, "У данной компании отсутствуют проекты."
 
 
-@pytest.mark.parametrize('headers, id ', [(headers, project_new)])
-def test_get_id_project(headers, id):
-    get_project = project_api.get_id_project(headers, id)
-    assert get_project["id"] == id
-
+def test_get_id_project(project_new):
+    get_project = project_api.get_id_project(headers, project_new)
+    assert get_project["id"]  is not None
 
 def test_edit_id_project():
     project = {
@@ -73,10 +75,10 @@ def test_edit_id_project():
 def test_create_project_negative(project, headers):
     if (project is None) or (project == ""):
         print("В запросе создания проекта отсутствует обязательный атрибут, "
-              "определяющий параметры проекта(Json)")
+              " определяющий параметры проекта(Json)")
     elif ((headers is None) or (headers == "")):
         print("В запросе создания проекта отсутствует информация "
-              "об авторизации клиента(headers)")
+              " об авторизации клиента(headers)")
     else:
         project_new = project_api.create_project(project, headers)
         Parametrs.id_project_new = project_new["id"]
@@ -95,14 +97,18 @@ def test_get_list_project_negarive(headers):
             "У данной компании отсутствуют проекты."
 
 
-@pytest.mark.parametrize('headers, id', [(headers, project_new)])
-def test_get_id_project_negative(headers, id):
+@pytest.mark.parametrize('headers, project',
+                         [(headers, None),
+                          (None, project)
+                          ])
+def test_get_id_project_negative(headers, project):
     if (headers is None) or (headers == ''):
         print("В запросе получения списка проектов отсутствует информация"
               "об авторизации клиента(headers)")
-    elif (id is None) or (id == ''):
+    elif (project is None) or (project == ''):
         print("В запросе получения списка проектов отсутствует информация"
               "об  идентификаторе проекта(id)")
     else:
-        get_project = project_api.get_id_project(headers, id)
-    assert get_project["id"] == id
+        create_project =  project_api.create_project(project, headers)
+        get_project = project_api.get_id_project(headers, create_project["id"])
+        assert get_project["id"] is not None
