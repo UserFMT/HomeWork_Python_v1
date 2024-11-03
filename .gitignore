@@ -27,7 +27,8 @@ share/python-wheels/
 MANIFEST
 .idea/
 08_lesson/Parameters_local.py
-
+09_lesson/Object.py
+09_lesson/test.py
 
 # PyInstaller
 #  Usually these files are written by a python script from a template
