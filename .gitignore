@@ -26,6 +26,8 @@ share/python-wheels/
 *.egg
 MANIFEST
 .idea/
+08_lesson/Parameters_local.py
+
 
 # PyInstaller
 #  Usually these files are written by a python script from a template
