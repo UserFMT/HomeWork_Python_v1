@@ -6,21 +6,33 @@ db_connection_string = "postgresql://postgres:vfhn2010@localhost:5432/HW4"
 
 
 def test_db():
-    db = create_engine(db_connection_string)
+    #db = create_engine(db_connection_string)
+
+    db = Object(db_connection_string)
     # выбираем название всех таблиц из базы
     insp = inspect(db).get_table_names()
 
-    """ добавить студента
-     1. определение уникального user_id
-     2. добавить student для  уникального user_id
-     3  удалить студента 
-     """
+    # получаем id
+    new_id_user = int(db.set_id_user()[0])
 
-    sql_statement = text("select max(user_id)+1  from student s")
-    new_id_user = db.connect().execute(sql_statement).first()
-    sql_statement = text(f"insert into users (user_id,user_email,subject_id) "
-                         f"values ({int(new_id_user[0])},'test_9999@com',10)")
-    db.connect().execute(sql_statement)
-    #db.connect().close()
-    assert 1==1
+    # Открываем соединение и начинаем транзакцию
+    """
+    with db.connect() as connection:
+        with connection.begin() as transaction:
+            try:
+                sql_statement = text(
+                    f"insert into users (user_id, user_email, subject_id) "
+                    f"values ({int(new_id_user[0])}, 'test_9999@com', 10)"
+                )
+                connection.execute(sql_statement)
 
+                # Фиксируем транзакцию
+                transaction.commit()
+            except Exception as e:
+                # В случае ошибки откатываем транзакцию
+                transaction.rollback()
+                print(f"Ошибка: {e}")
+    """
+    db.insert_user(new_id_user,"test1@com",10,"Ошибка добавления user")
+
+    assert 1 == 1
