@@ -12,6 +12,7 @@ selector = ['#delay', 'div.screen']
 
 
 @allure.epic("Калькулятор")
+@allure.title("Калькулятор")
 @allure.description("Тестирование сайта онлайн-калькулятора")
 @allure.severity("critical")
 @pytest.mark.parametrize('result_test', [(str(result))])

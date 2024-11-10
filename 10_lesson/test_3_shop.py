@@ -34,6 +34,7 @@ selector_result = 'summary_total_label'
 
 
 @allure.epic("Заказ одежды")
+@allure.title("Заказ одежды")
 @allure.description("Тестирование сайта заказа одежды")
 @allure.severity("critical")
 @pytest.mark.parametrize('result', [test_summa])

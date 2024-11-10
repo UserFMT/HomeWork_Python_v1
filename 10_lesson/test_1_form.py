@@ -23,6 +23,7 @@ color_red = 'rgba(248, 215, 218, 1)'
 
 
 @allure.epic("Форма с данными пользователя")
+@allure.title("Форма с данными пользователя")
 @allure.description("Тестирование сайта заказа одежды")
 @allure.severity("critical")
 def test_form_user():
